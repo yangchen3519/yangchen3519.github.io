@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://yangchen3519.github.io</id>
+    <title>yc&apos;s blog</title>
+    <updated>2025-06-03T05:24:38.671Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://yangchen3519.github.io"/>
+    <link rel="self" href="https://yangchen3519.github.io/atom.xml"/>
+    <subtitle>personal record</subtitle>
+    <logo>https://yangchen3519.github.io/images/avatar.png</logo>
+    <icon>https://yangchen3519.github.io/favicon.ico</icon>
+    <rights>All rights reserved 2025, yc&apos;s blog</rights>
+    <entry>
+        <title type="html"><![CDATA[不要死掉啊不要啊]]></title>
+        <id>https://yangchen3519.github.io/bu-yao-si-diao-a-bu-yao-a/</id>
+        <link href="https://yangchen3519.github.io/bu-yao-si-diao-a-bu-yao-a/">
+        </link>
+        <updated>2025-06-03T04:56:41.000Z</updated>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[SSH原理​]]></title>
+        <id>https://yangchen3519.github.io/ssh-yuan-li/</id>
+        <link href="https://yangchen3519.github.io/ssh-yuan-li/">
+        </link>
+        <updated>2025-05-20T06:54:18.000Z</updated>
+    </entry>
+</feed>

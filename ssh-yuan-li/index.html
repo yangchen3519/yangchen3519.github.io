@@ -1,0 +1,206 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SSH原理​ | yc&#39;s blog</title>
+<link rel="shortcut icon" href="https://yangchen3519.github.io/favicon.ico?v=1748927622640">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://yangchen3519.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="SSH原理​ | yc&#39;s blog - Atom Feed" href="https://yangchen3519.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="1. 加密算法​
+
+对称加密：加密和解密使用同一个密钥，例如 DES、AES、IDEA、SM1、SM4​
+​
+​
+非对称加密：发送方用公钥对信息进行加密，接收方收到密文后，使用私钥进行解密，例如 RSA、ECC、SM2​
+​
+​
+散列算法：..." />
+    <meta name="keywords" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.5.1/build/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://yangchen3519.github.io">
+  <img class="avatar" src="https://yangchen3519.github.io/images/avatar.png?v=1748927622640" alt="">
+  </a>
+  <h1 class="site-title">
+    yc&#39;s blog
+  </h1>
+  <p class="site-description">
+    personal record
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              SSH原理​
+            </h2>
+            <div class="post-info">
+              <span>
+                2025-05-20
+              </span>
+              <span>
+                3 min read
+              </span>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content" v-pre>
+                <h2 id="1-加密算法">1. 加密算法​</h2>
+<ul>
+<li><strong>对称加密</strong>：加密和解密使用同一个密钥，例如 DES、AES、IDEA、SM1、SM4​<br>
+​<img src="https://yangchen3519.github.io/post-images/1747724356217.PNG" alt="" loading="lazy"><br>
+​</li>
+<li><strong>非对称加密</strong>：发送方用公钥对信息进行加密，接收方收到密文后，使用私钥进行解密，例如 RSA、ECC、SM2​<br>
+​<img src="https://yangchen3519.github.io/post-images/1747724360775.PNG" alt="" loading="lazy"><br>
+​</li>
+<li><strong>散列算法</strong>：哈希加密系列算法，特点是不可逆、唯一性，例如 MD5、SHA、SM3​<br>
+  相较于对称加密，非对称加密的安全性更高，但加解密的效率也相对降低，因此像 HTTPS 的 TLS1.2 握手协议就使采用了对称加密和非对称加密结合的方式进行密文数据传输​</li>
+</ul>
+<h2 id="2-ssh-认证登录过程">2. SSH 认证登录过程</h2>
+<p>  SSH 全称是 Secure Shell，即安全外壳协议，是一种专为远程登陆会话和网络服务提供安全性的应用层协议​<br>
+  SSH 用户认证最基本的两种方式是密码认证和密钥认证。密码认证是将自己的用户名和密码发送给服务器进行认证，这种方式比较简单，且每次登录都需要输入用户名和密码；密钥认证具体的过程见下图。​<br>
+​<img src="https://yangchen3519.github.io/post-images/1747724389007.PNG" alt="" loading="lazy"><br>
+​</p>
+<ul>
+<li>在进行 SSH 连接之前，SSH 客户端需要先生成自己的公钥私钥对，并将自己的公钥存放在 SSH 服务器上。​</li>
+<li>SSH 客户端发送登录请求，SSH 服务器就会根据请求中的用户名等信息在本地搜索客户端的公钥，并用这个公钥加密一个随机数发送给客户端。​</li>
+<li>客户端使用自己的私钥对返回信息进行解密，并发送给服务器。​</li>
+<li>服务器验证客户端解密的信息是否正确，如果正确则认证通过。​<br>
+  也就是说当我们通过本地主机访问远程服务器时，本地相当于 SSH 客户端，要求本地存在私钥，将公钥发送给服务器；​<br>
+  而当我们在服务器中进行 git 操作时，服务器相当于 SSH 客户端，要求服务器中存在私钥，将公钥配置在 GitHub 中，可以通过以下命令将本地的私钥发送给远程服务器：​</li>
+<li>默认端口号：</li>
+</ul>
+<pre><code class="language-bash">scp -r /home/user/my_folder user@192.168.1.10:/home/user/remote_folder
+</code></pre>
+<ul>
+<li>其他端口号：</li>
+</ul>
+<pre><code class="language-bash">scp -P 端口号 /home/user/my_folder user@192.168.1.10:/home/user/remote_folder
+</code></pre>
+<h2 id="3-ssh生成密钥算法对比">3. SSH生成密钥算法对比</h2>
+<figure data-type="image" tabindex="1"><img src="https://yangchen3519.github.io/post-images/1747724559856.png" alt="" loading="lazy"></figure>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li>
+<ul>
+<li><a href="#1-%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95">1. 加密算法​</a></li>
+<li><a href="#2-ssh-%E8%AE%A4%E8%AF%81%E7%99%BB%E5%BD%95%E8%BF%87%E7%A8%8B">2. SSH 认证登录过程</a></li>
+<li><a href="#3-ssh%E7%94%9F%E6%88%90%E5%AF%86%E9%92%A5%E7%AE%97%E6%B3%95%E5%AF%B9%E6%AF%94">3. SSH生成密钥算法对比</a></li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://yangchen3519.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
